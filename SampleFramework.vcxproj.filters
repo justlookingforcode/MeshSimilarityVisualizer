@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shader Files">
+      <UniqueIdentifier>{e12a2884-5980-41b6-ae58-2833afba1415}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility">
+      <UniqueIdentifier>{290e413e-5489-4091-a2a2-ba788363118c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene Object">
+      <UniqueIdentifier>{af8c2e1b-783d-484e-abbb-d6c7508bd705}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Assets">
+      <UniqueIdentifier>{65180cd4-34b1-4253-8843-e93e98d849fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Assets\Models">
+      <UniqueIdentifier>{b84b5372-1e0a-4443-923c-378d36b36e36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Base Libary">
+      <UniqueIdentifier>{d8fca3d3-0866-4282-9128-e4d0593b2b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics Component">
+      <UniqueIdentifier>{b5f61e5e-73b1-48ef-832c-216e3f7fa028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{eaac27ee-1e33-4cc3-9687-fd3610b8a5ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Collision">
+      <UniqueIdentifier>{73f5f53e-1bca-4134-b11e-0b4cde46b65e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Collision\AABB">
+      <UniqueIdentifier>{dbf18427-cc40-42c3-a237-0fa4e8c33118}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Collision\BS">
+      <UniqueIdentifier>{78dca61e-750d-449c-8262-623f734034e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Collision\Plane">
+      <UniqueIdentifier>{2fa02cb1-8103-4705-987c-fa120fd59f6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering">
+      <UniqueIdentifier>{0841753f-672b-40f1-9352-cdcd4048e5c7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="extern\gl\gl3w.c">
+      <Filter>Source Files\Base Libary</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input.cpp">
+      <Filter>Source Files\Base Libary</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files\Base Libary</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Conversion.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CollisionPrimitives.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>Source Files\Assets\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelManager.cpp">
+      <Filter>Source Files\Assets\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GFXComponent.cpp">
+      <Filter>Source Files\Graphics Component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AABB.cpp">
+      <Filter>Source Files\Collision\AABB</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BS.cpp">
+      <Filter>Source Files\Collision\BS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HierachicalAABB.cpp">
+      <Filter>Source Files\Collision\AABB</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HierachicalBS.cpp">
+      <Filter>Source Files\Collision\BS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Collision.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Plane.cpp">
+      <Filter>Source Files\Collision\Plane</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneObjectManager.cpp">
+      <Filter>Source Files\Scene Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneObject.cpp">
+      <Filter>Source Files\Scene Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Conversion.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\defines.h">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Collision.h">
+      <Filter>Source Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CollisionPrimitives.h">
+      <Filter>Source Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BoundingVolume.h">
+      <Filter>Source Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model.h">
+      <Filter>Source Files\Assets\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModelManager.h">
+      <Filter>Source Files\Assets\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GFXComponent.h">
+      <Filter>Source Files\Graphics Component</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AABB.h">
+      <Filter>Source Files\Collision\AABB</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BS.h">
+      <Filter>Source Files\Collision\BS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HierachicalAABB.h">
+      <Filter>Source Files\Collision\AABB</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HierachicalBS.h">
+      <Filter>Source Files\Collision\BS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Plane.h">
+      <Filter>Source Files\Collision\Plane</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneObjectManager.h">
+      <Filter>Source Files\Scene Object</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input.hpp">
+      <Filter>Source Files\Base Libary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math.hpp">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\object.hpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mesh.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\camera.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IControlledSceneObject.h">
+      <Filter>Source Files\Base Libary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneObject.h">
+      <Filter>Source Files\Scene Object</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\main.fs">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\main.vs">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\heatmap.fs">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\heatmap.vs">
+      <Filter>Shader Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

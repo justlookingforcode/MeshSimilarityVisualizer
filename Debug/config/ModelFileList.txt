@@ -1,0 +1,2 @@
+TEAPOT models\\teapot.obj
+BUNNY models\\bunny.obj
