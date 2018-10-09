@@ -58,6 +58,10 @@ Proto::SceneObject sceneObject1;
 Proto::SceneObject sceneObject2;
 std::vector<Proto::SceneObject> vecSceneObjects;
 
+const int maxObjCount = 30;
+const int maxj = 5;
+const int maxi = maxObjCount / maxj;
+
 IControlledSceneObject* activeControlledObject(&mainCam);
 u32 activeShaderProgram = ProgType::MAIN_PROG;
 
@@ -804,59 +808,65 @@ void Render()
 
 
 	Proto::SceneObject* pSphere = gom.m_AllActiveObj["sphere"];
-	Proto::SceneObject* pBox = gom.m_AllActiveObj["box"];
+    //@TODO for loop recalculating too many things lol
+    for (auto it = gom.m_AllActiveObj.begin(); it != gom.m_AllActiveObj.end(); ++it)
+    {
+        if (it->first == "sphere")
+            continue;
 
-	if (renderingModeChanged)
-	{
-		switch (activeShaderProgram)
-		{
-		case ProgType::HEAT_MAP_PROG:
-			activeShaderProgram = ProgType::MAIN_PROG;
-			break;
+        Proto::SceneObject* pOther = it->second;
 
-		case ProgType::MAIN_PROG:
-			activeShaderProgram = ProgType::HEAT_MAP_PROG;
-			updateHeatMap(pSphere, pBox);
-			updateHeatMap(pBox, pSphere);
+        if (renderingModeChanged)
+        {
+            switch (activeShaderProgram)
+            {
+            case ProgType::HEAT_MAP_PROG:
+                activeShaderProgram = ProgType::MAIN_PROG;
+                break;
 
-			break;
+            case ProgType::MAIN_PROG:
+                activeShaderProgram = ProgType::HEAT_MAP_PROG;
+                updateHeatMap(pSphere, pOther);
+                updateHeatMap(pOther, pSphere);
 
-		default:
-			break;
-		}
+                break;
 
-		
-		glUseProgram(prog[activeShaderProgram]);
-		SetUpMainUniformLocations(prog[activeShaderProgram]);
-		mainCam.moved = true;
-		mainCam.resized = true;
-		renderingModeChanged = false;
-	}
+            default:
+                break;
+            }
 
 
-	glClearBufferfv(GL_COLOR, 0, bgColor);
-	glClearBufferfv(GL_DEPTH, 0, &one);
+            glUseProgram(prog[activeShaderProgram]);
+            SetUpMainUniformLocations(prog[activeShaderProgram]);
+            mainCam.moved = true;
+            mainCam.resized = true;
+            renderingModeChanged = false;
+        }
 
-    ComputeMainCamMats();
-	bool hasChanged(activeControlledObject->isMoved());
-	gom.UpdateAll(deltaTime);
 
-	//recalculate heatmap when needed
-	if (hasChanged && activeControlledObject != &mainCam && activeShaderProgram == ProgType::HEAT_MAP_PROG)
-	{
-		updateHeatMap(pSphere, pBox);
-		updateHeatMap(pBox,pSphere);
-	}
+        glClearBufferfv(GL_COLOR, 0, bgColor);
+        glClearBufferfv(GL_DEPTH, 0, &one);
 
-	Proto::AABB aabb = pBox->GetMeshRenderer()->GetWorldSpaceAABB();
-	Proto::BS bs = pSphere->GetMeshRenderer()->GetWorldSpaceBS();
+        ComputeMainCamMats();
+        bool hasChanged(activeControlledObject->isMoved());
+        gom.UpdateAll(deltaTime);
 
-	UpdateLightPosViewFrame();
+        //recalculate heatmap when needed
+        if (hasChanged && activeControlledObject != &mainCam && activeShaderProgram == ProgType::HEAT_MAP_PROG)
+        {
+            updateHeatMap(pSphere, pOther);
+            updateHeatMap(pOther, pSphere);
+        }
+        //@TODO could either be AABB or bs
+        Proto::AABB aabb = pOther->GetMeshRenderer()->GetWorldSpaceAABB();
+        Proto::BS bs = pSphere->GetMeshRenderer()->GetWorldSpaceBS();
+    
+	    UpdateLightPosViewFrame();
 
-	SendProjMat(mainCamProjMat, mainProjMatLoc);
+	    SendProjMat(mainCamProjMat, mainProjMatLoc);
 
-    RenderMeshObjs();
-
+        RenderMeshObjs();
+    }
     /*  Reset */
 	mainCam.moved = false;
 	mainCam.resized = false;
@@ -875,24 +885,26 @@ void LoadResources()
     Proto::SceneObject* p_go;
     Proto::GFXComponent*c;
     Proto::SceneObjectManager& gom = Proto::SceneObjectManager::GetInstance();
-#if(TEST_NUM == TEST_0)
+
     dSphereMesh = CreateSphere(8, 8);
-	dSphereMesh2 = CreateSphere(8, 8);
-	dCubeMesh = CreateCube(1, 1, 1);
+    dSphereMesh2 = CreateSphere(8, 8);
+    dCubeMesh = CreateCube(1, 1, 1);
 
-	Proto::Model* dSphere = new Proto::Model(dSphereMesh);
-	Proto::Model* dSphere2 = new Proto::Model(dSphereMesh2);
-	Proto::Model* dMesh = new Proto::Model(dCubeMesh);
+    Proto::Model* dSphere = new Proto::Model(dSphereMesh);
+    Proto::Model* dSphere2 = new Proto::Model(dSphereMesh2);
+    Proto::Model* dMesh = new Proto::Model(dCubeMesh);
 
-	mm.AddModel("MODEL_DSPHERE", dSphere);
-	mm.AddModel("MODEL_DSPHERE2", dSphere2);
-	mm.AddModel("MODEL_DCUBE", dMesh);
+    mm.AddModel("MODEL_DSPHERE", dSphere);
+    mm.AddModel("MODEL_DSPHERE2", dSphere2);
+    mm.AddModel("MODEL_DCUBE", dMesh);
 
-	mm.GetModel("MODEL_DSPHERE")->BuildSphere(mm.GetModel("MODEL_DSPHERE")->GetModelMesh());
-	mm.GetModel("MODEL_DSPHERE")->BuildAABB(mm.GetModel("MODEL_DCUBE")->GetModelMesh());
-	mm.GetModel("MODEL_DCUBE")->BuildSphere(mm.GetModel("MODEL_DSPHERE")->GetModelMesh());
-	mm.GetModel("MODEL_DCUBE")->BuildAABB(mm.GetModel("MODEL_DCUBE")->GetModelMesh());
+    mm.GetModel("MODEL_DSPHERE")->BuildSphere(mm.GetModel("MODEL_DSPHERE")->GetModelMesh());
+    mm.GetModel("MODEL_DSPHERE")->BuildAABB(mm.GetModel("MODEL_DCUBE")->GetModelMesh());
+    mm.GetModel("MODEL_DCUBE")->BuildSphere(mm.GetModel("MODEL_DSPHERE")->GetModelMesh());
+    mm.GetModel("MODEL_DCUBE")->BuildAABB(mm.GetModel("MODEL_DCUBE")->GetModelMesh());
 
+#if(TEST_NUM == TEST_0)
+    
     //str path("config//ModelFileList.txt");
     //mm.LoadAllModels(path);
 
@@ -926,10 +938,67 @@ void LoadResources()
     c->SetModel("MODEL_DCUBE");
     gom.AddSceneObject(p_go);
 #elif(TEST_NUM == TEST_1)
-    const int maxObjCount = 20;
+
+    //first item
+    p_go = &sceneObject0;
+    p_go->SetSoInstID(std::string("sphere"));
+    p_go->SetPosVec(vec3(-10, 0, -30));
+    p_go->SetScaleVec(vec3(5.5f, 5.5f, 5.5f));
+    c = p_go->GetMeshRenderer();
+    c->SetColorTexture(texID[ImageID::STONE_TEX]);
+    c->SetModel("MODEL_DSPHERE2");
+    gom.AddSceneObject(p_go);
+
     vecSceneObjects.reserve(maxObjCount);
     //@TODO create multiple objects, place them in Octree data struct
-
+    const float startX = -30;
+    const float startY = -30;
+    const float startZ = -50;
+    float curX = startX;
+    float curY = startY;
+    float curZ = startZ;
+    bool toggleCubeModel = true;
+    std::string curModelStr;
+    std::string instIDStr;
+    int texType = 0;
+    for (int i = 0; i < maxi; ++i)
+    {
+        curY = startY + (10.f* i);
+        if (toggleCubeModel)
+        {
+            curModelStr = "MODEL_DCUBE";
+            texType = ImageID::STONE_TEX;
+            toggleCubeModel = false;
+        }
+        else
+        {
+            curModelStr = "MODEL_DSPHERE";
+            texType = ImageID::POTTERY_TEX;
+            toggleCubeModel = true;
+        }
+        for (int j = 0; j < maxj; ++j)
+        {
+            curX = startX + (10.f * j);
+            vecSceneObjects.push_back(Proto::SceneObject());
+            p_go = &vecSceneObjects.back();
+            if (toggleCubeModel == false)
+            {
+                instIDStr = "cube_" + std::to_string(i) + "_" + std::to_string(j);
+            }
+            else
+            {
+                instIDStr = "sphere_" + std::to_string(i) + "_" + std::to_string(j);
+            }
+            p_go->SetSoInstID(std::string(instIDStr));
+            p_go->SetPosVec(vec3(curX, curY, curZ));
+            std::cout << curX << " " << curY << " \n";
+            p_go->SetScaleVec(vec3(5.5f, 5.5f, 5.5f));
+            c = p_go->GetMeshRenderer();
+            c->SetColorTexture(texID[texType]);
+            c->SetModel(curModelStr);
+            gom.AddSceneObject(p_go);
+        }
+    }
 #endif
 }
 
