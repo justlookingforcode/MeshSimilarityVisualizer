@@ -58,7 +58,7 @@ Proto::SceneObject sceneObject1;
 Proto::SceneObject sceneObject2;
 std::vector<Proto::SceneObject> vecSceneObjects;
 
-const int maxObjCount = 30;
+const int maxObjCount = 50;
 const int maxj = 5;
 const int maxi = maxObjCount / maxj;
 
@@ -809,64 +809,76 @@ void Render()
 
 	Proto::SceneObject* pSphere = gom.m_AllActiveObj["sphere"];
     //@TODO for loop recalculating too many things lol
-    for (auto it = gom.m_AllActiveObj.begin(); it != gom.m_AllActiveObj.end(); ++it)
+	
+	if (renderingModeChanged)
+	{
+		switch (activeShaderProgram)
+		{
+		case ProgType::HEAT_MAP_PROG:
+			activeShaderProgram = ProgType::MAIN_PROG;
+			break;
+
+		case ProgType::MAIN_PROG:
+			for (auto it = gom.m_AllActiveObj.begin(); it != gom.m_AllActiveObj.end(); ++it)
+			{
+				if (it->first == "sphere")
+					continue;
+
+				Proto::SceneObject* pOther = it->second;
+
+				activeShaderProgram = ProgType::HEAT_MAP_PROG;
+				updateHeatMap(pSphere, pOther);
+				updateHeatMap(pOther, pSphere);
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		glUseProgram(prog[activeShaderProgram]);
+		SetUpMainUniformLocations(prog[activeShaderProgram]);
+		mainCam.moved = true;
+		mainCam.resized = true;
+		renderingModeChanged = false;
+	}
+	
+
+    glClearBufferfv(GL_COLOR, 0, bgColor);
+    glClearBufferfv(GL_DEPTH, 0, &one);
+
+    ComputeMainCamMats();
+    bool hasChanged(activeControlledObject->isMoved());
+    gom.UpdateAll(deltaTime);
+
+    //recalculate heatmap when needed
+	//optimization using spatial partitioning required here
+    if (hasChanged && activeControlledObject != &mainCam && activeShaderProgram == ProgType::HEAT_MAP_PROG)
     {
-        if (it->first == "sphere")
-            continue;
+		for (auto it = gom.m_AllActiveObj.begin(); it != gom.m_AllActiveObj.end(); ++it)
+		{
+			if (it->first == "sphere")
+				continue;
 
-        Proto::SceneObject* pOther = it->second;
+			Proto::SceneObject* pOther = it->second;
 
-        if (renderingModeChanged)
-        {
-            switch (activeShaderProgram)
-            {
-            case ProgType::HEAT_MAP_PROG:
-                activeShaderProgram = ProgType::MAIN_PROG;
-                break;
-
-            case ProgType::MAIN_PROG:
-                activeShaderProgram = ProgType::HEAT_MAP_PROG;
-                updateHeatMap(pSphere, pOther);
-                updateHeatMap(pOther, pSphere);
-
-                break;
-
-            default:
-                break;
-            }
+			updateHeatMap(pSphere, pOther);
+			updateHeatMap(pOther, pSphere);
 
 
-            glUseProgram(prog[activeShaderProgram]);
-            SetUpMainUniformLocations(prog[activeShaderProgram]);
-            mainCam.moved = true;
-            mainCam.resized = true;
-            renderingModeChanged = false;
-        }
-
-
-        glClearBufferfv(GL_COLOR, 0, bgColor);
-        glClearBufferfv(GL_DEPTH, 0, &one);
-
-        ComputeMainCamMats();
-        bool hasChanged(activeControlledObject->isMoved());
-        gom.UpdateAll(deltaTime);
-
-        //recalculate heatmap when needed
-        if (hasChanged && activeControlledObject != &mainCam && activeShaderProgram == ProgType::HEAT_MAP_PROG)
-        {
-            updateHeatMap(pSphere, pOther);
-            updateHeatMap(pOther, pSphere);
-        }
-        //@TODO could either be AABB or bs
-        Proto::AABB aabb = pOther->GetMeshRenderer()->GetWorldSpaceAABB();
-        Proto::BS bs = pSphere->GetMeshRenderer()->GetWorldSpaceBS();
-    
-	    UpdateLightPosViewFrame();
-
-	    SendProjMat(mainCamProjMat, mainProjMatLoc);
-
-        RenderMeshObjs();
+			//Proto::AABB aabb = pOther->GetMeshRenderer()->GetWorldSpaceAABB();
+			//Proto::BS bs = pSphere->GetMeshRenderer()->GetWorldSpaceBS();
+		}
     }
+   
+    
+    
+	UpdateLightPosViewFrame();
+
+	SendProjMat(mainCamProjMat, mainProjMatLoc);
+
+    RenderMeshObjs();
+    
     /*  Reset */
 	mainCam.moved = false;
 	mainCam.resized = false;
@@ -998,6 +1010,7 @@ void LoadResources()
             c->SetModel(curModelStr);
             gom.AddSceneObject(p_go);
         }
+		gom.incrementRenderObjCount();
     }
 #endif
 }
