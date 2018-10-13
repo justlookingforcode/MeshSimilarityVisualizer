@@ -77,6 +77,19 @@ private:
 	void SubDivideModelTriangles(const Proto::AABB& parentAABB, const VertexBufferType &pnts, const std::vector<int> &indicies, std::vector<int>&leftIndices, std::vector<int>&rightIndices);
 	void ConstructSubTree(const VertexBufferType &pnts, const std::vector<int> &indicies, HierachicalAABBNode*, const u32 parentIndex, const u32 iterationCount);
 
+	//my helper functions
+	void GetHalfLengthAndSort(std::array<int, 3>& idxs, std::array<float, 3>& lens, const vec3& radius);
+
+	template<typename T, size_t SIZE>
+	void ShiftBackAndAssign(std::array<T, SIZE>& arr, const unsigned& fromIndex, const T& val)
+	{
+		for (unsigned i = SIZE - 1; i > fromIndex; --i)
+		{
+			arr[i] = arr[i - 1];
+		}
+		arr[fromIndex] = val;
+	}
+
 	template< typename T1, typename T2>
 	void CheckSubTree(const HierachicalAABBNode& node, T1& visitor, T2& IsInPartition)
 	{
