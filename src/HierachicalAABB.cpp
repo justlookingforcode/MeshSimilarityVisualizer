@@ -25,9 +25,28 @@ void HierachicalAABB::BuildFromModel(const VertexBufferType &pnts, const std::ve
 {
 	this->maxDepth = maxDepth;
 	//TODO: IMPLEMENT YOUR OWN MODEL PARSING ENTRY POINT
+    //@MSMS:DONE
+    if (maxDepth > 0)
+    {
+        unsigned size = 1, tempSize = 1, itSize = 2;
+
+        for (unsigned i = 1; i < maxDepth - 1; ++i, itSize <<= 1)
+        {
+            tempSize += itSize;
+        }
+        if (maxDepth > 1)
+        {
+            size = tempSize + itSize;
+        }
+
+        this->nodes.resize(size);
+        ConstructSubTree(pnts, indicies, &this->nodes[0], 0, maxDepth);
+    }
+    /*
 	this->nodes.resize(1);
 	this->nodes[0].m_LeftChild = this->nodes[0].m_RightChild = -1;
 	ConstructSubTree(pnts, indicies, &this->nodes[0], 0, 1);
+    */
 }
 
 
@@ -83,7 +102,7 @@ void HierachicalAABB::SubDivideModelTriangles(
 	, std::vector<int>&rightIndices)
 {
 	//TODO : IMPLEMENT YOUR OWN CUSTOM TRIANGLE/VERTEX SPLITTING ALGORITHM
-
+    //@MSMS:DONE
 	std::array<int, 3> idxs{ 0,0,0 };
 	std::array<float, 3> lens{ 0, 0, 0 };
 	std::array<vec3, 3> axis{ vec3{1,0,0}, vec3{0,1,0}, vec3{0,0,1} };
@@ -162,6 +181,7 @@ void HierachicalAABB::ConstructSubTree(const VertexBufferType &pnts
 		return;
 	}
 	//TODO : IMPLEMENT YOUR OWN CUSTOM TREE CONSTRUCTION ALGORITHM
+    //@MSMS:TODO
 	SubDivideModelTriangles(node->m_AABB, pnts, indicies,lIndices, rIndicies);	
 	
 	

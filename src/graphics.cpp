@@ -950,7 +950,7 @@ void LoadResources()
     c->SetModel("MODEL_DCUBE");
     gom.AddSceneObject(p_go);
 #elif(TEST_NUM == TEST_1)
-
+    //@MSMS:DONE
     //first item
     p_go = &sceneObject0;
     p_go->SetSoInstID(std::string("sphere"));
