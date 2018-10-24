@@ -14,6 +14,10 @@
 #include "math.hpp"
 #include "mesh.hpp"
 #include "Assimp/aiscene.h"        // Output data structure
+#include "Assimp/assimp.hpp"
+#include "Assimp/aipostprocess.h"
+#include <iostream>
+#include <fstream> //file io stream
 
 /*  Function prototype(s) */
 void BuildIndexBuffer(int stacks, int slices, Mesh &mesh);
@@ -387,6 +391,23 @@ void ComputeTangentsBitangents(VertexBufferType &vertices, const IndexBufferType
     delete[] AverageCounter;
 }
 
+//@MSMS:TODO
+bool Mesh::LoadModelFromFile(const str & path)
+{	
+	Assimp::Importer Importer;
+
+	const aiScene* pScene = Importer.ReadFile(path.c_str(), aiProcessPreset_TargetRealtime_Quality);
+
+	if (pScene == nullptr)
+	{
+		std::cout << path + " Mesh file not found or unable to load file.\n";
+		return false;
+	}
+
+	const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
+	//http://ogldev.atspace.co.uk/www/tutorial22/tutorial22.html
+	return true;
+}
 
 void Mesh::UpdateGPUVertexBuffer()
 {
@@ -394,4 +415,25 @@ void Mesh::UpdateGPUVertexBuffer()
 	glBufferSubData(GL_ARRAY_BUFFER, 0, vertexBuffer.size() * sizeof(vertexBuffer[0]), &vertexBuffer[0]);
 	//glBufferData(GL_ARRAY_BUFFER, vertexBuffer.size() * sizeof(vertexBuffer[0]), &vertexBuffer[0], GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+//@MSMS:TODO
+void Mesh::LoadVertices(const aiMesh * t_Mesh)
+{
+}
+//@MSMS:TODO
+void Mesh::LoadNormal(const aiMesh * t_Mesh)
+{
+}
+//@MSMS:TODO
+void Mesh::LoadTangent(const aiMesh * t_Mesh)
+{
+}
+//@MSMS:TODO
+void Mesh::LoadTextureUV(const aiMesh * t_Mesh)
+{
+}
+//@MSMS:TODO
+void Mesh::LoadIndices(const aiMesh * t_Mesh)
+{
 }

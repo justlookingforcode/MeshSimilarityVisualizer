@@ -69,6 +69,7 @@ u32 activeShaderProgram = ProgType::MAIN_PROG;
 Mesh dSphereMesh;
 Mesh dSphereMesh2;
 Mesh dCubeMesh;
+Mesh dBunnyMesh;
 
 /*  Matrices for view/projetion transformations */
 /*  Viewer camera */
@@ -1012,6 +1013,8 @@ void LoadResources()
         }
 		gom.incrementRenderObjCount();
     }
+#elif(TEST_NUM == TEST_2)
+
 #endif
 }
 
