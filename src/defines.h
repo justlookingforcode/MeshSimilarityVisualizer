@@ -94,5 +94,5 @@ const float  EPSILON = 0.00001f;
 #define TEST_0 0
 #define TEST_1 1
 #define TEST_2 2
-#define TEST_NUM TEST_1
+#define TEST_NUM TEST_2
 #endif

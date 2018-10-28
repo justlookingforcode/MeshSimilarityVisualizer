@@ -391,7 +391,7 @@ void ComputeTangentsBitangents(VertexBufferType &vertices, const IndexBufferType
     delete[] AverageCounter;
 }
 
-//@MSMS:TODO
+//@MSMS:TODO http://ogldev.atspace.co.uk/www/tutorial22/tutorial22.html
 bool Mesh::LoadModelFromFile(const str & path)
 {	
 	Assimp::Importer Importer;
@@ -400,12 +400,28 @@ bool Mesh::LoadModelFromFile(const str & path)
 
 	if (pScene == nullptr)
 	{
-		std::cout << path + " Mesh file not found or unable to load file.\n";
+        std::cout << "Error parsing file " << path << " : " << Importer.GetErrorString() << std::endl;
 		return false;
 	}
 
-	const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
-	//http://ogldev.atspace.co.uk/www/tutorial22/tutorial22.html
+    vertexBuffer.resize(pScene->mNumMeshes * 3);
+    indexBuffer.resize(pScene->mNumMeshes * 3);
+
+    //loop per mesh
+    for (int i = 0; i < pScene->mNumMeshes; ++i)
+    {
+        const aiMesh* paiMesh = pScene->mMeshes[i];
+
+        //per vertex
+        LoadVertices(paiMesh);
+
+        //per index
+        LoadIndices(paiMesh);
+    }
+
+	//Update GPU
+	UpdateGPUVertexBuffer();
+
 	return true;
 }
 
@@ -420,6 +436,33 @@ void Mesh::UpdateGPUVertexBuffer()
 //@MSMS:TODO
 void Mesh::LoadVertices(const aiMesh * t_Mesh)
 {
+    const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
+
+    for (int j = 0; j < t_Mesh->mNumVertices; ++j)
+    {
+        const aiVector3D* pPos = &(t_Mesh->mVertices[j]);
+        const aiVector3D* pNormal = &(t_Mesh->mNormals[j]);
+        const aiVector3D* pTexCoord = t_Mesh->HasTextureCoords(0) ? &(t_Mesh->mTextureCoords[0][j]) : &Zero3D;
+        const aiVector3D* ptan = &Zero3D;
+        const aiVector3D* pbitan = &Zero3D;
+        if (t_Mesh->HasTangentsAndBitangents())
+        {
+            ptan = t_Mesh->mTangents;
+            pbitan = t_Mesh->mBitangents;
+        }
+        Vertex v(
+            Vec3(pPos->x, pPos->y, pPos->z),            //pos
+            Vec3(pNormal->x, pNormal->y, pNormal->z),   //normal
+            Vec3(ptan->x, ptan->y, ptan->z),            //tangent
+            Vec3(pbitan->x, pbitan->y, pbitan->z),      //bitangent
+            Vec2(pTexCoord->x, pTexCoord->y)            //tex,uv
+            );
+
+        vertexBuffer.push_back(v);
+    }
+	numVertices = t_Mesh->mNumVertices;
+	numTris = t_Mesh->mNumFaces;
+
 }
 //@MSMS:TODO
 void Mesh::LoadNormal(const aiMesh * t_Mesh)
@@ -436,4 +479,15 @@ void Mesh::LoadTextureUV(const aiMesh * t_Mesh)
 //@MSMS:TODO
 void Mesh::LoadIndices(const aiMesh * t_Mesh)
 {
+    for (int k = 0; k < t_Mesh->mNumFaces; ++k)
+    {
+        const aiFace& face = t_Mesh->mFaces[k];
+        if (face.mNumIndices == 3)
+        {
+            indexBuffer.push_back(face.mIndices[0]);
+            indexBuffer.push_back(face.mIndices[1]);
+            indexBuffer.push_back(face.mIndices[2]);
+        }
+    }
+	numIndices = indexBuffer.size();
 }

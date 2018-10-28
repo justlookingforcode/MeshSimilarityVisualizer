@@ -809,7 +809,7 @@ void Render()
 
 
 	Proto::SceneObject* pSphere = gom.m_AllActiveObj["sphere"];
-    //@TODO for loop recalculating too many things lol
+    //@MSMS:TODO for loop recalculating too many things lol
 	
 	if (renderingModeChanged)
 	{
@@ -963,7 +963,7 @@ void LoadResources()
     gom.AddSceneObject(p_go);
 
     vecSceneObjects.reserve(maxObjCount);
-    //@TODO create multiple objects, place them in Octree data struct
+    //@MSMS:DONE create multiple objects, place them in BSP data struct
     const float startX = -30;
     const float startY = -30;
     const float startZ = -50;
@@ -1014,11 +1014,69 @@ void LoadResources()
 		gom.incrementRenderObjCount();
     }
 #elif(TEST_NUM == TEST_2)
+	
+	vecSceneObjects.reserve(maxObjCount);
+	//first item
+	//p_go = &sceneObject0;
+	vecSceneObjects.push_back(Proto::SceneObject());
+	p_go = &vecSceneObjects.back();
+	p_go->SetSoInstID(std::string("sphere"));
+	p_go->SetPosVec(vec3(-10, 0, -30));
+	p_go->SetScaleVec(vec3(5.5f, 5.5f, 5.5f));
+	c = p_go->GetMeshRenderer();
+	c->SetColorTexture(texID[ImageID::STONE_TEX]);
+	c->SetModel("MODEL_DSPHERE2");
+	gom.AddSceneObject(p_go);
+
+	//second item
+	//p_go = &sceneObject1;
+	vecSceneObjects.push_back(Proto::SceneObject());
+	p_go = &vecSceneObjects.back();
+	p_go->SetSoInstID(std::string("box"));
+	p_go->SetPosVec(vec3(10, 0, -50));
+	p_go->SetScaleVec(vec3(10.5f, 10.5f, 10.5f));
+	c = p_go->GetMeshRenderer();
+	c->SetColorTexture(texID[ImageID::POTTERY_TEX]);
+	c->SetModel("MODEL_DSPHERE");
+	gom.AddSceneObject(p_go);
+
+	//3rd item
+	//p_go = &sceneObject2;
+	vecSceneObjects.push_back(Proto::SceneObject());
+	p_go = &vecSceneObjects.back();
+	p_go->SetSoInstID(std::string("box1"));
+	p_go->SetPosVec(vec3(10, 15, -50));
+	p_go->SetScaleVec(vec3(10.5f, 10.5f, 10.5f));
+	c = p_go->GetMeshRenderer();
+	c->SetColorTexture(texID[ImageID::POTTERY_TEX]);
+	c->SetModel("MODEL_DCUBE");
+	gom.AddSceneObject(p_go);
+
+	//load bunny
+	Proto::Model* dBunny = new Proto::Model("models/bunny.obj");
+	mm.AddModel("MODEL_DBUNNY", dBunny);
+	mm.GetModel("MODEL_DBUNNY")->BuildSphere(mm.GetModel("MODEL_DBUNNY")->GetModelMesh());
+	mm.GetModel("MODEL_DBUNNY")->BuildAABB(mm.GetModel("MODEL_DBUNNY")->GetModelMesh());
+
+	vecSceneObjects.push_back(Proto::SceneObject());
+	p_go = &vecSceneObjects.back();
+	p_go->SetSoInstID(std::string("bunny"));
+	p_go->SetPosVec(vec3(10, 20, -50));
+	p_go->SetScaleVec(vec3(0.1f, 0.1f, 0.1f));
+	p_go->SetRotVec(vec3(-1.571f,0,0));
+	c = p_go->GetMeshRenderer();
+	c->SetColorTexture(texID[ImageID::POTTERY_TEX]);
+	c->SetModel("MODEL_DBUNNY");
+	gom.AddSceneObject(p_go);
 
 #endif
 }
 
+void LoadModels(enModelType enMT, str sModelName, str sMeshPath,
+	str SOinstID, vec3 pos, vec3 scale, s32 imgID)
+{
 
+}
 
 void TW_CALL ToggleBoundingVolumeVisibility(void *)
 {

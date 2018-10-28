@@ -55,6 +55,13 @@ struct ProgType
 	enum { MAIN_PROG = 0, HEAT_MAP_PROG,  NUM_PROGTYPES };
 };
 
+enum enModelType
+{
+	MTSphere = 0,
+	MTCube,
+	MTComplex
+};
+
 /*  Public functions */
 void SetUp();
 void CleanUp();
@@ -69,6 +76,10 @@ void SendObjectColor(const vec3& color, GLint objectColorLoc);
 void ComputeObjMVMat(Mat4& MVMat, Mat4& NMVMat, const Mat4& viewMat, const Mat4& modelMat);
 void LoadResources();
 void SendObjTexID(GLuint texID, int activeTex, GLint texLoc);
+
+//My helper functions
+void LoadModels(enModelType enMT, str sModelName, str sMeshPath,
+	str SOinstID, vec3 pos, vec3 scale, s32 imgID);
 
 
 void TW_CALL ToggleDrawWireFrame(void *);

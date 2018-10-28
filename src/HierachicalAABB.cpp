@@ -161,32 +161,46 @@ void HierachicalAABB::ConstructSubTree(const VertexBufferType &pnts
 	std::vector<int> lIndices, rIndicies;
 	node->index = parentIndex;
 	node->depth = maxDepth - iterationCount;
-	//leaf node
-	if (iterationCount <= 1)
-	{
-		node->indices = indicies;
-		u32 total = node->indices.size();
-		node->triangleIndices.resize(total / 3);
-		for (u32 i = 0; i < total; i += 3)
-		{
-			u32 i0, i1, i2;
-			i0 = node->indices[i];
-			i1 = node->indices[i + 1];
-			i2 = node->indices[i + 2];
-			node->triangleIndices[i / 3][0] = i0;
-			node->triangleIndices[i / 3][1] = i1;
-			node->triangleIndices[i / 3][2] = i2;
-		}
 
-		return;
+    //TODO : IMPLEMENT YOUR OWN CUSTOM TREE CONSTRUCTION ALGORITHM
+    //@MSMS:DONE
+	if (iterationCount > 1)
+    {
+        SubDivideModelTriangles(node->m_AABB, pnts, indicies, lIndices, rIndicies);
+
+        if (!lIndices.empty() && !rIndicies.empty())
+        {
+            //set current node child index
+            node->m_LeftChild = (parentIndex + 1) * 2 - 1;
+            node->m_RightChild = (parentIndex + 1) * 2;
+            //set child node parent index
+            this->nodes[node->m_LeftChild].m_Parent = parentIndex;
+            this->nodes[node->m_RightChild].m_Parent = parentIndex;
+
+            //recursively build subtree for left and right
+            //ConstructSubTree(pnts, indicies, &this->nodes[0], 0, maxDepth);
+            ConstructSubTree(pnts, indicies, &this->nodes[node->m_LeftChild], node->m_LeftChild, iterationCount - 1);
+            ConstructSubTree(pnts, indicies, &this->nodes[node->m_RightChild], node->m_RightChild, iterationCount - 1);
+        }
 	}
-	//TODO : IMPLEMENT YOUR OWN CUSTOM TREE CONSTRUCTION ALGORITHM
-    //@MSMS:TODO
-	SubDivideModelTriangles(node->m_AABB, pnts, indicies,lIndices, rIndicies);	
-	
-	
-	return;
-	
+
+    return;	
+	/*
+
+    node->indices = indicies;
+    u32 total = node->indices.size();
+    node->triangleIndices.resize(total / 3);
+    for (u32 i = 0; i < total; i += 3)
+    {
+    u32 i0, i1, i2;
+    i0 = node->indices[i];
+    i1 = node->indices[i + 1];
+    i2 = node->indices[i + 2];
+    node->triangleIndices[i / 3][0] = i0;
+    node->triangleIndices[i / 3][1] = i1;
+    node->triangleIndices[i / 3][2] = i2;
+    }
+    */	
 }
 
 
