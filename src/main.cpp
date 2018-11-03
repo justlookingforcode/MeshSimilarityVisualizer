@@ -91,7 +91,7 @@ void CreateAntTweakBar()
 
     TwBar *myBar;
     myBar = TwNewBar("Parameters");
-    TwDefine("Parameters color='50 50 50' alpha=10 fontSize=3 position='10 10' size='300 250' valuesWidth=50 ");
+    TwDefine("Parameters color='50 50 50' alpha=10 fontSize=3 position='10 10' size='300 500' valuesWidth=50 ");
 
     /*  Displaying FPS */
 	TwAddVarRO(myBar, "Frame Rate", TW_TYPE_FLOAT, &fps, ""); 
@@ -100,6 +100,13 @@ void CreateAntTweakBar()
 	TwAddButton(myBar, "ControlCamera", SetControlledObjAsCamera, NULL, " label='Control camera' oup='' ");
 	TwAddButton(myBar, "ControlSceneObject0", SetControlledObjAsSceneObj0, NULL, " label='Control scene obj 0' group='' ");
 	TwAddButton(myBar, "ControlSceneObject1", SetControlledObjAsSceneObj1, NULL, " label='Control scene obj 1' group='' ");
+    TwAddButton(myBar, "ControlSceneObject2", SetControlledObjAsSceneObj2, NULL, " label='Control scene bunny' group='' ");
+
+    TwAddSeparator(myBar, "misc", "group='Other'");
+    TwAddButton(myBar, "BoundingVolumesUsed", ToggleBoundingVolumeVisibility, NULL, " label='Toggle Draw BV' group='Bounding_Volumes' ");
+    TwAddVarRO(myBar, "RenderedDeptha", TW_TYPE_UINT32, &u8CurrentBSPDepth, " min=1 max=7 step=1 group='Bounding_Volumes' label='Rendered Depth' ");
+    TwAddButton(myBar, "RaiseDepth", IncrementDepth, NULL, " label='Increase Depth' group='Bounding_Volumes' ");
+    TwAddButton(myBar, "LowerDepth", DecrementDepth, NULL, " label='DecreaseDepth' group='Bounding_Volumes' ");
 }
 
 

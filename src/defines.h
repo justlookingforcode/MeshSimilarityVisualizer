@@ -91,8 +91,17 @@ const float  RAD_TO_DEG = 180.0f / PI;
 
 const float  EPSILON = 0.00001f;
 
+
+enum enMeshType
+{
+    MTCube = 0,
+    MTSphere,
+    MTComplex
+};
+
 #define TEST_0 0
 #define TEST_1 1
 #define TEST_2 2
-#define TEST_NUM TEST_2
+#define TEST_3 3
+#define TEST_NUM TEST_0
 #endif

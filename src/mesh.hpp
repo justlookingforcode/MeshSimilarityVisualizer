@@ -101,6 +101,9 @@ struct Mesh
     GLuint VBO;
     GLuint IBO;
 
+    //type of mesh
+    enMeshType enMT;
+
     bool LoadModelFromFile(const str& path);
 	void UpdateGPUVertexBuffer();
 private:

@@ -111,10 +111,7 @@ namespace Proto
 				t_Model->BuildSphere(this->m_ModelContainer["MODEL_DSPHERE"]->GetModelMesh());
 	            t_Model->BuildAABB(this->m_ModelContainer["MODEL_DCUBE"]->GetModelMesh());
 				//t_Model->BuildHierachicalOBB();
-				//t_Model->BuildHierachicalAABB();
-				//t_Model->BuildHierachicalAABB();
-
-
+				t_Model->BuildHierachicalAABB();
             }
             
         }

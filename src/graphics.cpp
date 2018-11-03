@@ -13,6 +13,7 @@
 #endif
 #include <iostream>
 #include <ctime>
+#include <map>
 #include "graphics.hpp"
 #include "Camera.hpp"
 #include "textfile.h"
@@ -56,6 +57,9 @@ Camera mainCam;
 Proto::SceneObject sceneObject0;
 Proto::SceneObject sceneObject1;
 Proto::SceneObject sceneObject2;
+
+Proto::SceneObject teapotObj;
+Proto::SceneObject bunnyObj;
 std::vector<Proto::SceneObject> vecSceneObjects;
 
 const int maxObjCount = 50;
@@ -66,6 +70,7 @@ IControlledSceneObject* activeControlledObject(&mainCam);
 u32 activeShaderProgram = ProgType::MAIN_PROG;
 
 //debug meshes
+std::map<str, Mesh*> mapDebugMesh;
 Mesh dSphereMesh;
 Mesh dSphereMesh2;
 Mesh dCubeMesh;
@@ -93,6 +98,9 @@ GLint normalTexLoc, bumpTexLoc;
 /*  For indicating whether object has normal map, and parallax mapping status */
 GLint normalMappingOnLoc, parallaxMappingOnLoc;
 
+#define MAXBSPDEPTH 7
+//depth of BSP
+u8 u8CurrentBSPDepth = 1;
 
 struct ShaderType
 {
@@ -890,8 +898,45 @@ void Render()
     glutSwapBuffers();
 }
 
+/*
+void LoadModels(enMeshType enMT, str sModelName, str sMeshPath,
+    str SOinstID, vec3 pos, vec3 scale, vec3 rot, s32 imgID)
+{
+    Proto::ModelManager& mm = Proto::ModelManager::GetInstance();
+    Proto::SceneObject* p_go;
+    Proto::GFXComponent*c;
+    Proto::SceneObjectManager& gom = Proto::SceneObjectManager::GetInstance();
 
+    switch (enMT)
+    {
+    case MTSphere:
+        break;
+    case MTCube:
+        break;
+    case MTComplex:
+        auto it = mapDebugMesh.find(sMeshPath);
+        if (it == mapDebugMesh.end())
+        {
+            Proto::Model* dComplexMesh = new Proto::Model(sMeshPath);
+        }
+        mm.AddModel(sModelName, dComplexMesh);
+        mm.GetModel(sModelName)->BuildSphere(mm.GetModel(sModelName)->GetModelMesh());
+        mm.GetModel(sModelName)->BuildAABB(mm.GetModel(sModelName)->GetModelMesh());
 
+        vecSceneObjects.push_back(Proto::SceneObject());
+        p_go = &vecSceneObjects.back();
+        p_go->SetSoInstID(std::string(SOinstID));
+        p_go->SetPosVec(pos);
+        p_go->SetScaleVec(scale);
+        p_go->SetRotVec(rot);
+        c = p_go->GetMeshRenderer();
+        c->SetColorTexture(imgID);
+        c->SetModel(sModelName);
+        gom.AddSceneObject(p_go);
+        break;
+    }
+}
+*/
 void LoadResources()
 {
     Proto::ModelManager& mm = Proto::ModelManager::GetInstance();
@@ -915,17 +960,17 @@ void LoadResources()
     mm.GetModel("MODEL_DSPHERE")->BuildAABB(mm.GetModel("MODEL_DCUBE")->GetModelMesh());
     mm.GetModel("MODEL_DCUBE")->BuildSphere(mm.GetModel("MODEL_DSPHERE")->GetModelMesh());
     mm.GetModel("MODEL_DCUBE")->BuildAABB(mm.GetModel("MODEL_DCUBE")->GetModelMesh());
-
+    
 #if(TEST_NUM == TEST_0)
     
-    //str path("config//ModelFileList.txt");
-    //mm.LoadAllModels(path);
+    str path("config//ModelFileList.txt");
+    mm.LoadAllModels(path);
 
 	//first item
 	p_go = &sceneObject0;
 	p_go->SetSoInstID(std::string("sphere"));
-	p_go->SetPosVec(vec3(-10, 0, -50));
-	p_go->SetScaleVec(vec3(5.5f, 5.5f, 5.5f));
+	p_go->SetPosVec(vec3(-30, 0, -50));
+	p_go->SetScaleVec(vec3(25.5f, 25.5f, 25.5f));
 	c = p_go->GetMeshRenderer();
 	c->SetColorTexture(texID[ImageID::STONE_TEX]);
 	c->SetModel("MODEL_DSPHERE2");
@@ -933,7 +978,7 @@ void LoadResources()
 
 	//second item
 	p_go = &sceneObject1;
-	p_go->SetSoInstID(std::string("box"));
+	p_go->SetSoInstID(std::string("sphere2"));
 	p_go->SetPosVec(vec3(10, 0, -50));
 	p_go->SetScaleVec(vec3(10.5f,10.5f, 10.5f));
 	c = p_go->GetMeshRenderer();
@@ -942,14 +987,36 @@ void LoadResources()
 	gom.AddSceneObject(p_go);
 
     //3rd item
+    /*
     p_go = &sceneObject2;
     p_go->SetSoInstID(std::string("box1"));
-    p_go->SetPosVec(vec3(10, 15, -50));
+    p_go->SetPosVec(vec3(12, 15, -50));
     p_go->SetScaleVec(vec3(10.5f, 10.5f, 10.5f));
     c = p_go->GetMeshRenderer();
     c->SetColorTexture(texID[ImageID::POTTERY_TEX]);
     c->SetModel("MODEL_DCUBE");
     gom.AddSceneObject(p_go);
+    */
+    p_go = &bunnyObj;
+    LoadSceneObj(
+        p_go,
+        "BUNNY",
+        "bunny",
+        vec3(12, 15, -50),
+        vec3(0.1f, 0.1f, 0.1f),
+        vec3(-PI*0.5f, 0, 0),
+        texID[ImageID::NORMAL_MAP_TEX]);
+
+    p_go = &teapotObj;
+    LoadSceneObj(
+        p_go,
+        "TEAPOT",
+        "teapot",
+        vec3(-8, 10, -50),
+        vec3(0.2f, 0.2f, 0.2f),
+        vec3(0, 0, 0),
+        texID[ImageID::NORMAL_MAP_TEX]);
+
 #elif(TEST_NUM == TEST_1)
     //@MSMS:DONE
     //first item
@@ -1053,6 +1120,11 @@ void LoadResources()
 	gom.AddSceneObject(p_go);
 
 	//load bunny
+    //LoadModels(MTComplex, "MODEL_DBUNNY", "models/bunny.obj", "bunny", vec3(10, 20, -50), vec3(0.1f, 0.1f, 0.1f), vec3(-1.571f, 0, 0), texID[ImageID::POTTERY_TEX]);
+
+    //load teapot
+    LoadModels(MTComplex, "MODEL_DTEAPOT", "models/teapot.obj", "teapot", vec3(10, 25, -50), vec3(0.1f, 0.1f, 0.1f), vec3(0, 0, 0), texID[ImageID::POTTERY_TEX]);
+    /*
 	Proto::Model* dBunny = new Proto::Model("models/bunny.obj");
 	mm.AddModel("MODEL_DBUNNY", dBunny);
 	mm.GetModel("MODEL_DBUNNY")->BuildSphere(mm.GetModel("MODEL_DBUNNY")->GetModelMesh());
@@ -1068,14 +1140,112 @@ void LoadResources()
 	c->SetColorTexture(texID[ImageID::POTTERY_TEX]);
 	c->SetModel("MODEL_DBUNNY");
 	gom.AddSceneObject(p_go);
+    */
 
+#elif(TEST_NUM == TEST_3)
+    
+    Proto::ModelManager& mm = Proto::ModelManager::GetInstance();
+    Proto::SceneObject* p_go;
+    Proto::GFXComponent*c;
+    Proto::SceneObjectManager& gom = Proto::SceneObjectManager::GetInstance();
+
+    //Add debug meshes
+    dCubeMesh = CreateCube(1, 1, 1);
+    dSphereMesh = CreateSphere(8, 8);
+
+    mapDebugMesh["aabb"] = &dCubeMesh;
+    mapDebugMesh["sphere"] = &dSphereMesh;
+
+    //Add debug models
+    Proto::Model* dCubeModel = new Proto::Model(dCubeMesh);
+    Proto::Model* dSphereModel = new Proto::Model(dSphereMesh);
+
+    //Load Models
+    mm.AddModel("MODEL_DCUBE", dCubeModel);
+    mm.AddModel("MODEL_DSPHERE", dSphereModel);
+
+    mm.GetModel("MODEL_DCUBE")->BuildSphere(mm.GetModel("MODEL_DSPHERE")->GetModelMesh());
+    mm.GetModel("MODEL_DCUBE")->BuildAABB(mm.GetModel("MODEL_DCUBE")->GetModelMesh());
+    mm.GetModel("MODEL_DSPHERE")->BuildSphere(mm.GetModel("MODEL_DSPHERE")->GetModelMesh());
+    mm.GetModel("MODEL_DSPHERE")->BuildAABB(mm.GetModel("MODEL_DCUBE")->GetModelMesh());
+
+    str path("config//ModelFileList.txt");
+    mm.LoadAllModels(path);
+
+    //first item
+    /*LoadSceneObj(
+        "TEAPOT",
+        "teapot",
+        vec3(-8, 0, -50),
+        vec3(0.2f, 0.2f, 0.2f),
+        vec3(0, 0, 0),
+        texID[ImageID::NORMAL_MAP_TEX]);
+    */
+    vecSceneObjects.push_back(Proto::SceneObject());
+    p_go = &vecSceneObjects.back();
+    p_go->SetSoInstID(std::string("teapot"));
+    p_go->SetPosVec(vec3(-8, 0, -50));
+    p_go->SetScaleVec(vec3(0.2f, 0.2f, 0.2f));
+    c = p_go->GetMeshRenderer();
+    c->SetModel("TEAPOT");
+    gom.AddSceneObject(p_go);
+    
+    //second item
+     /*LoadSceneObj(
+        "MODEL_DCUBE",
+        "cube",
+        vec3(8, 0, -50),
+        vec3(10.5f, 10.5f, 10.5f),
+        vec3(0, 0, 0),
+        texID[ImageID::POTTERY_TEX]);
+    */
+    vecSceneObjects.push_back(Proto::SceneObject());
+    p_go = &vecSceneObjects.back();
+    p_go->SetSoInstID(std::string("cube"));
+    p_go->SetPosVec(vec3(8, 0, -50));
+    //p_go->SetScaleVec(vec3(2.f, 2.f, 2.f));
+    p_go->SetScaleVec(vec3(0.2f, 0.2f, 0.2f));
+    c = p_go->GetMeshRenderer();
+    c->SetModel("MODEL_DCUBE");
+    gom.AddSceneObject(p_go);
+    
+    //sphere
+    /*LoadSceneObj(
+        "MODEL_DSPHERE", 
+        "sphere", 
+        vec3(-10, 0, -30), 
+        vec3(5.5f, 5.5f, 5.5f), 
+        vec3(0, 0, 0), 
+        texID[ImageID::STONE_TEX]);*/
+    vecSceneObjects.push_back(Proto::SceneObject());
+    p_go = &vecSceneObjects.back();
+    p_go->SetSoInstID(std::string("sphere"));
+    p_go->SetPosVec(vec3(-10, 0, -30));
+    p_go->SetScaleVec(vec3(5.5f, 5.5f, 5.5f));
+    c = p_go->GetMeshRenderer();
+    c->SetColorTexture(texID[ImageID::STONE_TEX]);
+    c->SetModel("MODEL_DSPHERE");
+    gom.AddSceneObject(p_go);
 #endif
 }
 
-void LoadModels(enModelType enMT, str sModelName, str sMeshPath,
-	str SOinstID, vec3 pos, vec3 scale, s32 imgID)
+void LoadSceneObj(void* vp_go, str sModelName, str sSOInstID,
+    vec3 vecPos, vec3 vecScale, vec3 vecRot, s32 imgID)
 {
+    Proto::ModelManager& mm = Proto::ModelManager::GetInstance();
+    Proto::SceneObject* p_go = static_cast<Proto::SceneObject*>(vp_go);
+    Proto::GFXComponent*c;
+    Proto::SceneObjectManager& gom = Proto::SceneObjectManager::GetInstance();
 
+    //init SO
+    p_go->SetSoInstID(sSOInstID);
+    p_go->SetPosVec(vecPos);
+    p_go->SetScaleVec(vecScale);
+    p_go->SetRotVec(vecRot);
+    c = p_go->GetMeshRenderer();
+    c->SetColorTexture(imgID);
+    c->SetModel(sModelName);
+    gom.AddSceneObject(p_go);
 }
 
 void TW_CALL ToggleBoundingVolumeVisibility(void *)
@@ -1105,8 +1275,10 @@ void TW_CALL SetControlledObjAsSceneObj1(void *)
 	activeControlledObject = &sceneObject1;
 }
 
-
-
+void TW_CALL SetControlledObjAsSceneObj2(void *)
+{
+    activeControlledObject = &bunnyObj;
+}
 
 
 void TW_CALL ToggleDrawWireFrame(void *)
@@ -1119,7 +1291,16 @@ void TW_CALL ToggleRenderingMode(void *)
 	renderingModeChanged = true;
 }
 
+void TW_CALL IncrementDepth(void *)
+{
+    u8CurrentBSPDepth = (u8CurrentBSPDepth < MAXBSPDEPTH) ? u8CurrentBSPDepth + 1 : MAXBSPDEPTH;
+}
 
+void TW_CALL DecrementDepth(void *)
+{
+
+    u8CurrentBSPDepth = (u8CurrentBSPDepth > 1) ? u8CurrentBSPDepth - 1 : 1;
+}
 
 
 

@@ -47,7 +47,7 @@ namespace Proto
 		void				DrawDebugSphere(const mat4 &  t_VMatrix);
 		void				DrawDebugAABB(const mat4 &  t_VMatrix);
 
-
+		void				DrawDebugHierachicalAABB(const mat4 &  t_VMatrix);
 
 		void				UpdateWorldSpaceBoundingSphere(const vec3 &  t_translationVec, const vec3& t_ScaleVec, const vec3& t_RotVec, BS& t_worldSpaceBS);
 		void				UpdateWorldSpaceAABB(const mat4 &  t_MWMatrix, AABB& t_worldSpaceAABB);
@@ -58,7 +58,7 @@ namespace Proto
 		void				SetNormalMapTexture2(s32 colorTexID);
 		void				SetDefaultColor(const vec3& c);
 
-
+        HierachicalAABB&	GetHAABB();
 
 		HierachicalAABB&	GetWorldSpaceHAABB();
 		const AABB&			GetWorldSpaceAABB();

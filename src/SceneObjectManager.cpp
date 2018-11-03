@@ -84,8 +84,21 @@ namespace Proto
 
 		UpdateObj<GOINST_CONT, SceneObject>(this->m_AllActiveObj, t_DeltaTime);
 
+        //GFXComponent& go1(*this->m_RenderList[0]->GetMeshRenderer());
+        //GFXComponent& go2(*this->m_RenderList[1]->GetMeshRenderer());
 
+        for (int i = 0; i < m_RenderList.size(); ++i)
+        {
+            GFXComponent& go1(*this->m_RenderList[i]->GetMeshRenderer());
+            for (int j = 0; j < m_RenderList.size(); ++j)
+            {
+                if (i == j)
+                    continue;
+                GFXComponent& go2(*this->m_RenderList[j]->GetMeshRenderer());
 
+                hAABBhAABBCollision(go1.GetHAABB(), go2.GetHAABB());
+            }
+        }
 	}
 
 	void SceneObjectManager::UpdateRotation(const vec3& rotVec)
@@ -124,10 +137,19 @@ namespace Proto
 				(*t_Start)->Draw(viewMatrix, drawWireFrame);
 #endif
 
+        if (drawBoundingVolumes)// && useAABBFustrumCulling)
+        {
+            //<! draw debug aabbs
+            t_Start = this->m_RenderList.begin();
 
-
-
-
+            for (size_t renderCount = 0; t_Start != t_End && renderCount <renderObjectCount; ++t_Start, ++renderCount)
+            {
+                if ((*t_Start))
+                {
+                    (*t_Start)->DrawDebugHierachicalAABB(viewMatrix);
+                }
+            }
+        }
 	}
 
 

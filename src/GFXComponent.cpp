@@ -94,6 +94,7 @@ namespace Proto
 
 	void GFXComponent::UpdateWorldSpaceHierachicalAABB(const mat4 &  t_MWMatrix, HierachicalAABB& t_hAABB)
 	{
+        /*
 		auto& src(m_Model->GetModelMesh());
 		//copy out vertex buffer
 		auto vertices = src.vertexBuffer;
@@ -107,7 +108,12 @@ namespace Proto
 		HierachicalAABB hAABB;
 		t_hAABB = hAABB;
 		t_hAABB.BuildFromModel(vertices, src.indexBuffer, t_hAABB.getMaxDepth());
-		
+		*/
+        auto& src(m_Model->GetHierachicalAABB().nodes);
+        std::copy(src.begin(), src.end(), m_WorldSpaceHierachicalAABB.nodes.begin());
+        //t_hOBB = m_Model->GetHierachicalOBB();
+
+        m_WorldSpaceHierachicalAABB.ApplyTransform(t_MWMatrix, m_Model->GetHierachicalAABB());
 	}
 
     /*************************************************************************/
@@ -359,4 +365,46 @@ namespace Proto
 	{
 		color = c;
 	}
+
+    void GFXComponent::DrawDebugHierachicalAABB(const mat4 &  t_VMatrix)
+    {
+        u32 i = 0;
+        u32 e = this->m_WorldSpaceHierachicalAABB.nodes.size();
+
+        Model* t_BoxModel = ModelManager::GetInstance().GetModel("MODEL_DCUBE");
+        u32 depth = u8CurrentBSPDepth - 1;
+
+        for (; i < e; ++i)
+        {
+            HierachicalAABBNode& node(this->m_WorldSpaceHierachicalAABB.nodes[i]);
+            if (node.index != std::numeric_limits<u32>::max() &&
+
+                node.depth == depth
+                )
+            {
+
+                Proto::AABB& aabb(node.m_AABB);
+                mat4 mvMat, normalMVMat, mtwMat;
+                mtwMat = ScaleMatrix(vec3(aabb.m_Radius[0] * 2, aabb.m_Radius[1] * 2, aabb.m_Radius[2] * 2));
+                mtwMat[3][0] = aabb.m_Center.x;
+                mtwMat[3][1] = aabb.m_Center.y;
+                mtwMat[3][2] = aabb.m_Center.z;
+
+                vec3 c;
+                c.r = (node.collided) ? 255.f : 0.f;
+                c.g = (node.collided) ? 0.f : 255.f;
+                SendObjectColor(c, objectColorLoc);
+
+                ComputeObjMVMat(mvMat, normalMVMat, t_VMatrix, mtwMat);
+                SendMVMat(mvMat, normalMVMat, mainMVMatLoc, mainNMVMatLoc);
+                RenderMeshObj(t_BoxModel->GetModelMesh(), true);
+
+            }
+        }
+    }
+
+    HierachicalAABB&	GFXComponent::GetHAABB()
+    {
+        return m_WorldSpaceHierachicalAABB;
+    }
 }

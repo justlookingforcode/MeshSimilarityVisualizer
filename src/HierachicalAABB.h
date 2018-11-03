@@ -54,7 +54,7 @@ public:
 	~HierachicalAABB();
 	void BuildFromModel(const VertexBufferType &pnts, const std::vector<int> &indicies, const u32 maxDepth = 1);
 	HierachicalAABB& operator = (const HierachicalAABB&);
-
+    HierachicalAABB& ApplyTransform(const mat4& mat, const HierachicalAABB& t_ModelSpaceSource);
 
 	template< typename T1, typename T2>
 	void VisitNodes(T1& v, T2& c)

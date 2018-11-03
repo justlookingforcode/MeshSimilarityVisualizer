@@ -131,7 +131,14 @@ namespace Proto
 		this->m_MeshRenderer->DrawDebugAABB(viewMatrix);
 	}
 
+    void SceneObject::DrawDebugHierachicalAABB(const mat4& viewMatrix)
+    {
+        //if (this->m_IsInView == CS350::OUTSIDE)
+        //    return;
 
+        mat4 MVMat, normalMVMat;
+        this->m_MeshRenderer->DrawDebugHierachicalAABB(viewMatrix);
+    }
 	
 
 

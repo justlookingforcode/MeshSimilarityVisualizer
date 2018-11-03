@@ -39,14 +39,18 @@ void HierachicalAABB::BuildFromModel(const VertexBufferType &pnts, const std::ve
             size = tempSize + itSize;
         }
 
+        if (maxDepth <= 1)
+        {
+            lowestDepthStartingIndex = 0;
+        }
+        else
+        {
+            lowestDepthStartingIndex = tempSize;
+        }
+
         this->nodes.resize(size);
         ConstructSubTree(pnts, indicies, &this->nodes[0], 0, maxDepth);
     }
-    /*
-	this->nodes.resize(1);
-	this->nodes[0].m_LeftChild = this->nodes[0].m_RightChild = -1;
-	ConstructSubTree(pnts, indicies, &this->nodes[0], 0, 1);
-    */
 }
 
 
@@ -60,7 +64,21 @@ HierachicalAABB& HierachicalAABB::operator = (const HierachicalAABB& r)
 	return *this;
 }
 
+HierachicalAABB& HierachicalAABB::ApplyTransform(const mat4& mat, const HierachicalAABB& t_ModelSpaceSource)
+{
+    u32 total = nodes.size();
+    for (u32 i = 0; i != total; ++i)
+    {
+        Proto::AABB& aabb(nodes[i].m_AABB);
+        if (nodes[i].index != -1)
+        {
+            const Proto::AABB& src(t_ModelSpaceSource.nodes[i].m_AABB);
 
+            aabb.UpdateAABB(mat, src);
+        }
+    }
+    return *this;
+}
 
 u32 HierachicalAABB::getMaxDepth()
 {
@@ -179,8 +197,8 @@ void HierachicalAABB::ConstructSubTree(const VertexBufferType &pnts
 
             //recursively build subtree for left and right
             //ConstructSubTree(pnts, indicies, &this->nodes[0], 0, maxDepth);
-            ConstructSubTree(pnts, indicies, &this->nodes[node->m_LeftChild], node->m_LeftChild, iterationCount - 1);
-            ConstructSubTree(pnts, indicies, &this->nodes[node->m_RightChild], node->m_RightChild, iterationCount - 1);
+            ConstructSubTree(pnts, lIndices, &this->nodes[node->m_LeftChild], node->m_LeftChild, iterationCount - 1);
+            ConstructSubTree(pnts, rIndicies, &this->nodes[node->m_RightChild], node->m_RightChild, iterationCount - 1);
         }
 	}
 

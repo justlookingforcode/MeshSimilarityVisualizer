@@ -157,6 +157,8 @@ Mesh CreateCube(int length, int height, int width)
     mesh.numIndices = mesh.indexBuffer.size();
     mesh.numTris = mesh.numIndices / 3;
 
+    mesh.enMT = MTCube;
+
     return mesh;
 }
 
@@ -210,6 +212,8 @@ Mesh CreateSphere(int stacks, int slices)
 
     BuildIndexBuffer(stacks, slices, mesh);
     ComputeTangentsBitangents(mesh.vertexBuffer, mesh.indexBuffer);
+
+    mesh.enMT = MTSphere;
 
     return mesh;
 }
@@ -417,11 +421,11 @@ bool Mesh::LoadModelFromFile(const str & path)
 
         //per index
         LoadIndices(paiMesh);
+        
     }
 
-	//Update GPU
-	UpdateGPUVertexBuffer();
-
+    UpdateGPUVertexBuffer();
+    
 	return true;
 }
 
@@ -460,9 +464,6 @@ void Mesh::LoadVertices(const aiMesh * t_Mesh)
 
         vertexBuffer.push_back(v);
     }
-	numVertices = t_Mesh->mNumVertices;
-	numTris = t_Mesh->mNumFaces;
-
 }
 //@MSMS:TODO
 void Mesh::LoadNormal(const aiMesh * t_Mesh)
@@ -489,5 +490,4 @@ void Mesh::LoadIndices(const aiMesh * t_Mesh)
             indexBuffer.push_back(face.mIndices[2]);
         }
     }
-	numIndices = indexBuffer.size();
 }

@@ -55,13 +55,6 @@ struct ProgType
 	enum { MAIN_PROG = 0, HEAT_MAP_PROG,  NUM_PROGTYPES };
 };
 
-enum enModelType
-{
-	MTSphere = 0,
-	MTCube,
-	MTComplex
-};
-
 /*  Public functions */
 void SetUp();
 void CleanUp();
@@ -78,8 +71,8 @@ void LoadResources();
 void SendObjTexID(GLuint texID, int activeTex, GLint texLoc);
 
 //My helper functions
-void LoadModels(enModelType enMT, str sModelName, str sMeshPath,
-	str SOinstID, vec3 pos, vec3 scale, s32 imgID);
+void LoadSceneObj(void* p_go, str sModelName, str SOinstID,
+    vec3 pos, vec3 scale, vec3 rot, s32 imgID);
 
 
 void TW_CALL ToggleDrawWireFrame(void *);
@@ -89,5 +82,11 @@ void TW_CALL SetControlledObjAsCamera(void *);
 void TW_CALL SetControlledObjAsSceneObj0(void *);
 void TW_CALL SetControlledObjAsSceneObj1(void *);
 
+void TW_CALL SetControlledObjAsSceneObj2(void *);
+void TW_CALL ToggleBoundingVolumeVisibility(void *);
+void TW_CALL IncrementDepth(void *);
+void TW_CALL DecrementDepth(void *);
 
+extern u8 u8CurrentBSPDepth;
+extern bool drawBoundingVolumes;
 #endif

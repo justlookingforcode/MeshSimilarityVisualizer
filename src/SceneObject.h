@@ -47,6 +47,7 @@ namespace Proto
 		virtual void        DrawDebugSphere(const mat4& viewMatrix);
 		virtual void        DrawDebugAABB(const mat4& viewMatrix);
 
+		virtual void		DrawDebugHierachicalAABB(const mat4& viewMatrix);
 
 		const str &         GetSoInstID() const;
 		void                SetSoInstID(const str & t_GoInstID);

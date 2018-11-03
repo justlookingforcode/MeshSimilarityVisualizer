@@ -7,7 +7,8 @@
 #include "Assimp/assimp.hpp"       // C++ importer interface
 #include "Assimp/aipostprocess.h"
 #include "Model.h"
-
+#include <map>
+extern std::map<str, Mesh*> mapDebugMesh;
 
 namespace Proto
 {
@@ -122,6 +123,8 @@ namespace Proto
 			delete m_ObjMesh;
 
 		this->m_ObjMesh = new Mesh();
+        mapDebugMesh[m_FileName] = this->m_ObjMesh;
+
         // if unable to create scene ptr obj
         if(!t_Scene)
         {
@@ -207,6 +210,9 @@ namespace Proto
 
 
 		BuildHierachicalAABB();
+
+        this->m_ObjMesh->enMT = MTComplex;
+
         return this->m_IsLoaded = true;
     }
 
