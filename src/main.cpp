@@ -95,7 +95,6 @@ void CreateAntTweakBar()
 
     /*  Displaying FPS */
 	TwAddVarRO(myBar, "Frame Rate", TW_TYPE_FLOAT, &fps, ""); 
-	TwAddButton(myBar, "ToggleWireFrame", ToggleDrawWireFrame, NULL, " label='Toggle Wire Frame' group='' ");
 	TwAddButton(myBar, "ToggleHeatMap", ToggleRenderingMode, NULL, " label='Toggle Heat Map' group='' ");
 	TwAddButton(myBar, "ControlCamera", SetControlledObjAsCamera, NULL, " label='Control camera' oup='' ");
 	TwAddButton(myBar, "ControlSceneObject0", SetControlledObjAsSceneObj0, NULL, " label='Control scene obj 0' group='' ");
@@ -103,6 +102,8 @@ void CreateAntTweakBar()
     TwAddButton(myBar, "ControlSceneObject2", SetControlledObjAsSceneObj2, NULL, " label='Control scene bunny' group='' ");
 
     TwAddSeparator(myBar, "misc", "group='Other'");
+    TwAddButton(myBar, "ToggleRotateModel", ToggleRotateModel, NULL, " label='Toggle Rotate Model' group='' ");
+    TwAddButton(myBar, "ToggleWireFrame", ToggleDrawWireFrame, NULL, " label='Toggle Wire Frame' group='' ");
     TwAddButton(myBar, "BoundingVolumesUsed", ToggleBoundingVolumeVisibility, NULL, " label='Toggle Draw BV' group='Bounding_Volumes' ");
     TwAddVarRO(myBar, "RenderedDeptha", TW_TYPE_UINT32, &u8CurrentBSPDepth, " min=1 max=7 step=1 group='Bounding_Volumes' label='Rendered Depth' ");
     TwAddButton(myBar, "RaiseDepth", IncrementDepth, NULL, " label='Increase Depth' group='Bounding_Volumes' ");

@@ -101,6 +101,8 @@ GLint normalMappingOnLoc, parallaxMappingOnLoc;
 #define MAXBSPDEPTH 7
 //depth of BSP
 u8 u8CurrentBSPDepth = 1;
+bool boRotateModels = false;
+const vec3 rotVec = vec3(PI*0.001f, PI*0.001f, PI*0.001f);
 
 struct ShaderType
 {
@@ -1302,7 +1304,10 @@ void TW_CALL DecrementDepth(void *)
     u8CurrentBSPDepth = (u8CurrentBSPDepth > 1) ? u8CurrentBSPDepth - 1 : 1;
 }
 
-
+void TW_CALL ToggleRotateModel(void *)
+{
+    boRotateModels = !boRotateModels;
+}
 
 void updateHeatMap(Proto::SceneObject* shadedObject, Proto::SceneObject* opposingObject)
 {

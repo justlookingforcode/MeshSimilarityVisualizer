@@ -84,8 +84,16 @@ namespace Proto
 
 		UpdateObj<GOINST_CONT, SceneObject>(this->m_AllActiveObj, t_DeltaTime);
 
-        //GFXComponent& go1(*this->m_RenderList[0]->GetMeshRenderer());
-        //GFXComponent& go2(*this->m_RenderList[1]->GetMeshRenderer());
+        if (boRotateModels)
+        {
+            
+            for (int i = 0; i < m_RenderList.size(); ++i)
+            {
+                SceneObject* pSO = m_RenderList[i];
+                vec3 rot = pSO->GetRotVec();
+                pSO->SetRotVec(rot + rotVec);
+            }
+        }
 
         for (int i = 0; i < m_RenderList.size(); ++i)
         {

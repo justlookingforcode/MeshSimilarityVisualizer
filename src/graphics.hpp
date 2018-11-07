@@ -86,7 +86,10 @@ void TW_CALL SetControlledObjAsSceneObj2(void *);
 void TW_CALL ToggleBoundingVolumeVisibility(void *);
 void TW_CALL IncrementDepth(void *);
 void TW_CALL DecrementDepth(void *);
+void TW_CALL ToggleRotateModel(void *);
 
 extern u8 u8CurrentBSPDepth;
 extern bool drawBoundingVolumes;
+extern bool boRotateModels;
+extern const vec3 rotVec;
 #endif
